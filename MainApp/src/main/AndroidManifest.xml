@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zyj.bluetooth">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!--    对于Android SDK 23及更高版本，您可以选择在运行时请求权限，但安装时权限将处于默认状态，并且在安装时不会提示用户。
+    （基本上，这可以用于提示用户在需要使用的基础上授予权限，并且您有机会解释为什么需要它。）-->
+
+    <!--    但是，对于SDK 22及更低版本，将在安装时提示用户输入权限。 由于某些权限对用户来说似乎是可疑或狡猾的，因此您可能不
+    希望为SDK 22及更低版本请求这些权限，因为您无法预先解释为什么需要它们，因此<uses-permission-sdk-23>标签。-->
+
+    <!--    另外：文档不清楚sdk-23权限是否也会导致应用程序在Play商店中过滤，但如果您打算这样做，文档建议您使用<uses-feature>
+    元素宣布硬件兼容性。-->
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:name=".ZYJApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".main.MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".scan.ScanActivity"
+            android:allowTaskReparenting="true"
+            android:finishOnTaskLaunch="false"
+            android:relinquishTaskIdentity="false"
+            android:taskAffinity=".zyj_bluetooth" />
+
+    </application>
+
+</manifest>

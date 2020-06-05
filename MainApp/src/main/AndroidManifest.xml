@@ -24,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:alwaysRetainTaskState="true"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTask">
@@ -36,7 +36,7 @@
         </activity>
 
         <activity
-            android:name=".scan.ScanActivity"
+            android:name=".ui.scan.ScanActivity"
             android:allowTaskReparenting="true"
             android:finishOnTaskLaunch="false"
             android:relinquishTaskIdentity="false"

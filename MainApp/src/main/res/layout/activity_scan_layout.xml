@@ -10,7 +10,7 @@
 
         <variable
             name="vm"
-            type="com.zyj.bluetooth.scan.ScanViewModel" />
+            type="com.zyj.bluetooth.ui.scan.ScanViewModel" />
 
     </data>
 

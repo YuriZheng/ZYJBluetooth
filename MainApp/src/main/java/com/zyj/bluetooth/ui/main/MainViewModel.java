@@ -1,4 +1,4 @@
-package com.zyj.bluetooth.main;
+package com.zyj.bluetooth.ui.main;
 
 
 import android.app.Application;
@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.zyj.bluetooth.scan.ScanActivity;
+import com.zyj.bluetooth.ui.scan.ScanActivity;
 
 /**
  * Author: yuri.zheng<br>

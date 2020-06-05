@@ -1,4 +1,4 @@
-package com.zyj.bluetooth.main;
+package com.zyj.bluetooth.ui.main;
 
 import android.os.Bundle;
 

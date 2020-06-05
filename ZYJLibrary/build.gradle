@@ -38,5 +38,6 @@ dependencies {
 
     implementation rootProject.ext.dependencies.commons_io
     implementation rootProject.ext.dependencies.annotation
+    implementation rootProject.ext.dependencies.core
 
 }

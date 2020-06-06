@@ -35,8 +35,9 @@ public abstract class BaseActivity<T extends ViewDataBinding, D extends AndroidV
     @Override protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBinding = DataBindingUtil.setContentView(this, getMainLayout());
-        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())
-                .create(getViewModelClass());
+        // viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(getViewModelClass());
+        viewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(getViewModelClass());
         onInnerCreate(savedInstanceState);
         dataBinding.setLifecycleOwner(this);
     }

@@ -28,15 +28,6 @@ public final class ScanActivity extends BaseActivity<ActivityScanLayoutBinding, 
 
     }
 
-    @Override protected void onRequestPermissionDenied(@NonNull PBuilder deniedBuilder) {
-        super.onRequestPermissionDenied(deniedBuilder);
-
-//        if (permissions.contains(P.PERMISSION_ACCESS_FINE_LOCATION)) {
-//            Toast.makeText(this, R.string.bluetooth_access_fine_location_explain, Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
-    }
-
     @NonNull @Override protected Class<ScanViewModel> getViewModelClass() {
         return ScanViewModel.class;
     }

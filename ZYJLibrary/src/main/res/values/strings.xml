@@ -1,2 +1,8 @@
 <resources>
+
+    <string name="bluetooth_open_title">请求打开蓝牙</string>
+
+    <string name="bluetooth_permission_title">权限申请</string>
+    <string name="bluetooth_permission_waring_title">权限警告</string>
+
 </resources>

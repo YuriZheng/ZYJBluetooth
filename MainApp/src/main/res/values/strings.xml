@@ -4,9 +4,7 @@
     <string name="bluetooth_scan">蓝牙扫描</string>
     <string name="bluetooth_re_scan">重新扫描</string>
 
-    <string name="bluetooth_permission_title">权限申请</string>
-
-    <string name="bluetooth_access_fine_location_explain">我们需要蓝牙定位权限来开启相关功能</string>
-    <string name="bluetooth_access_fine_location_denied">很抱歉拒绝了权限，我们无法提供相关服务</string>
+    <string name="bluetooth_access_fine_location_explain">蓝牙服务需要GPS和网络相关服务进行定位，请求开启</string>
+    <string name="bluetooth_access_fine_location_denied">很抱歉拒绝了权限，我们无法提供蓝牙定位服务</string>
 
 </resources>

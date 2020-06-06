@@ -1,6 +1,7 @@
 package com.zyj.library;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public final class PUtil {
         }
         Bundle bundle = intent.getBundleExtra(REQUEST_DATA_PERMISSION_BUNDLE);
         if (bundle == null) {
-            bundle = Bundle.EMPTY;
+            bundle = new Bundle();
         }
         return bundle.getParcelable(REQUEST_DATA_PERMISSION_KEY);
     }
@@ -56,6 +58,42 @@ public final class PUtil {
     public static void requestPermissions(@NonNull Activity activity,
                                           final @NonNull PBuilder permissionBuilder,
                                           final boolean force) {
+        showToastDialog(activity, permissionBuilder, force);
+    }
+
+    /**
+     * 将字符串资源数组组合成字符串信息
+     */
+    public static String getPermissionMessage(@NonNull Context context, @NonNull @StringRes int[] messages) {
+        if (messages.length <= 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < messages.length; i++) {
+            sb.append(context.getResources().getString(messages[i]));
+            if (i != messages.length - 1) {
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    private static void showToastDialog(@NonNull Activity activity,
+                                        final @NonNull PBuilder permissionBuilder,
+                                        final boolean force) {
+        if (permissionBuilder.getRequestPermissions().length > 0) {
+            new AlertDialog.Builder(activity).setTitle(R.string.bluetooth_permission_title)
+                    .setMessage(getPermissionMessage(activity, permissionBuilder.getExplain()))
+                    .setOnDismissListener(dialog ->
+                            realRequestPermissions(activity, permissionBuilder, force))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create().show();
+        }
+    }
+
+    private static void realRequestPermissions(@NonNull Activity activity,
+                                               final @NonNull PBuilder permissionBuilder,
+                                               final boolean force) {
         String[] oldPermission = permissionBuilder.getRequestPermissions();
         List<Integer> insertList = new ArrayList<>(oldPermission.length);
         for (int i = 0; i < oldPermission.length; i++) {
@@ -99,7 +137,7 @@ public final class PUtil {
                                                      PBuilder insertPermissionBuilder) {
         // 将之前已经存在的和现在添加的数据进行合并处理
         if (bundle == null) {
-            bundle = Bundle.EMPTY;
+            bundle = new Bundle();
         }
         PBuilder builder = bundle.getParcelable(REQUEST_DATA_PERMISSION_KEY);
         if (builder == null) {

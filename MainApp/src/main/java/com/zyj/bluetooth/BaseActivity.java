@@ -1,5 +1,6 @@
 package com.zyj.bluetooth;
 
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -63,8 +64,8 @@ public abstract class BaseActivity<T extends ViewDataBinding, D extends AndroidV
                 }
             }
         }
-        String[] deniedPermissions = new String[deniedList.size()];
-        int[] explain = new int[deniedList.size()];
+        // String[] deniedPermissions = new String[deniedList.size()];
+        // int[] explain = new int[deniedList.size()];
         int[] denied = new int[deniedList.size()];
 
         for (int i = 0; i < deniedList.size(); i++) {
@@ -79,19 +80,33 @@ public abstract class BaseActivity<T extends ViewDataBinding, D extends AndroidV
             if (index < 0) {
                 throw new IllegalArgumentException("Can't find the permissions, check the request");
             }
-            deniedPermissions[i] = builder.getRequestPermissions()[index];
-            explain[i] = builder.getExplain()[i];
+            // deniedPermissions[i] = builder.getRequestPermissions()[index];
+            // explain[i] = builder.getExplain()[i];
             denied[i] = builder.getDenied()[i];
         }
 
-        onRequestPermissionDenied(PBuilder.newBuilder(deniedPermissions, explain, denied));
+        if (denied.length <= 0) {
+            // 全部通过
+            return;
+        }
+
+        String deniedString = PUtil.getPermissionMessage(this, denied);
+        new AlertDialog.Builder(this).setTitle(R.string.bluetooth_permission_waring_title)
+                .setMessage(deniedString)
+                .setOnDismissListener(dialog -> {
+                    if (permissionDeniedFinish()) {
+                        finish();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, null)
+                .create().show();
     }
 
     /**
-     * 被用户拒绝的权限集合
+     * 用户拒绝权限之后是否关闭当前界面
      */
-    protected void onRequestPermissionDenied(@NonNull PBuilder deniedBuilder) {
-        // Do nothing
+    protected boolean permissionDeniedFinish() {
+        return false;
     }
 
     protected abstract void onInnerCreate(@Nullable Bundle savedInstanceState);

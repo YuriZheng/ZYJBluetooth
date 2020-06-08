@@ -1,6 +1,5 @@
 package com.zyj.bluetooth.ui.scan;
 
-import android.graphics.drawable.RippleDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

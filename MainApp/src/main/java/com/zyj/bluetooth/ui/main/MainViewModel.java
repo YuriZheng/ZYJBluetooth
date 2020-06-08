@@ -2,11 +2,14 @@ package com.zyj.bluetooth.ui.main;
 
 
 import android.app.Application;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 
 import com.zyj.bluetooth.ui.scan.ScanActivity;
 
@@ -18,8 +21,13 @@ import com.zyj.bluetooth.ui.scan.ScanActivity;
  */
 public final class MainViewModel extends AndroidViewModel {
 
+    public MutableLiveData<Boolean> scanEnable = new MutableLiveData<>();
+
     public MainViewModel(@NonNull Application application) {
         super(application);
+
+        BluetoothManager bluetoothManager = (BluetoothManager) application.getSystemService(Context.BLUETOOTH_SERVICE);
+        scanEnable.setValue(bluetoothManager != null && bluetoothManager.getAdapter() != null);
     }
 
     public final void onJumpScanClick(View view) {

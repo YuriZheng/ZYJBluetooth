@@ -22,8 +22,9 @@
             android:id="@+id/start_scan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:enabled="@{vm.scanEnable}"
             android:onClick="@{v->vm.onJumpScanClick(v)}"
-            android:text="@string/bluetooth_scan"
+            android:text="@{vm.scanEnable ? @string/bluetooth_scan : @string/bluetooth_dis_enable}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

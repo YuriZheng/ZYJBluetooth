@@ -29,6 +29,12 @@ public final class PUtil {
     private static final String REQUEST_DATA_PERMISSION_BUNDLE = "_r_d_permission_bundle";
     private static final String REQUEST_DATA_PERMISSION_KEY = "_r_d_permission_key";
 
+    private static final boolean client = true;
+
+    public static boolean isClient() {
+        return client;
+    }
+
     /**
      * 检测是否有权限
      */

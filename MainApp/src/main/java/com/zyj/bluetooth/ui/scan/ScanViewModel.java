@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.zyj.library.PUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+
 /**
  * Author: yuri.zheng<br>
  * Email: zhengyujie@wps.cn<br>
@@ -37,10 +39,10 @@ public final class ScanViewModel extends AndroidViewModel {
 
     public final MutableLiveData<Boolean> finish = new MutableLiveData<>();
     public final MutableLiveData<Boolean> scaning = new MutableLiveData<>();
-    public final MutableLiveData<Integer> mode = new MutableLiveData<>();
+    public final MutableLiveData<String> mode = new MutableLiveData<>();
     public final MutableLiveData<Boolean> modeEnable = new MutableLiveData<>();
     public final MutableLiveData<Set<MyBluetoothDevice>> bDevices = new MutableLiveData<>();
-    private final BluetoothAdapter bluetoothAdapter;
+    private final BluetoothManager bluetoothManager;
     private final int TIME = 120; // 秒
     private final Handler handler = new Handler();
 
@@ -48,7 +50,7 @@ public final class ScanViewModel extends AndroidViewModel {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                scaning.postValue(bluetoothAdapter.isDiscovering());
+                scaning.postValue(bluetoothManager.getAdapter().isDiscovering());
                 bDevices.getValue().add(new MyBluetoothDevice(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE),
                         false));
                 bDevices.postValue(bDevices.getValue());
@@ -63,18 +65,19 @@ public final class ScanViewModel extends AndroidViewModel {
         }
     };
 
-    private final Runnable stopScanTask = new Runnable() {
-        @Override public void run() {
-            stopScanBluetooth();
-        }
-    };
+    private final Runnable stopScanTask = this::stopScanBluetooth;
 
     public ScanViewModel(@NonNull Application application) {
         super(application);
         finish.setValue(false);
         bDevices.setValue(new HashSet<>());
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        setScanMode(bluetoothAdapter.getScanMode());
+
+        bluetoothManager = (BluetoothManager) application.getSystemService(Context.BLUETOOTH_SERVICE);
+        if (bluetoothManager == null || bluetoothManager.getAdapter() == null) {
+            return;
+        }
+
+        setScanMode(bluetoothManager.getAdapter().getScanMode());
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         application.registerReceiver(receiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
@@ -90,7 +93,8 @@ public final class ScanViewModel extends AndroidViewModel {
     }
 
     final void onResume() {
-        scaning.setValue(bluetoothAdapter != null && bluetoothAdapter.isDiscovering());
+        scaning.setValue(bluetoothManager.getAdapter() != null
+                && bluetoothManager.getAdapter().isDiscovering());
     }
 
     final void onPause() {
@@ -114,19 +118,22 @@ public final class ScanViewModel extends AndroidViewModel {
 
     private void setScanMode(int newMode) {
         if (newMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            mode.postValue(R.string.bluetooth_scan_mode_connectable_discoverable);
+            mode.postValue(getApplication().getResources()
+                    .getString(R.string.bluetooth_scan_mode_connectable_discoverable));
             modeEnable.setValue(false);
         } else if (newMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE) {
-            mode.postValue(R.string.bluetooth_scan_mode_scan_mode_connectable);
+            mode.postValue(getApplication().getResources()
+                    .getString(R.string.bluetooth_scan_mode_scan_mode_connectable));
             modeEnable.setValue(false);
         } else if (newMode == BluetoothAdapter.SCAN_MODE_NONE) {
-            mode.postValue(R.string.bluetooth_scan_mode_none);
+            mode.postValue(getApplication().getResources()
+                    .getString(R.string.bluetooth_scan_mode_none));
             modeEnable.setValue(true);
         }
     }
 
     private boolean isDiscovering() {
-        return bluetoothAdapter != null && bluetoothAdapter.isDiscovering()
+        return bluetoothManager.getAdapter() != null && bluetoothManager.getAdapter().isDiscovering()
                 && scaning.getValue() != null && scaning.getValue();
     }
 
@@ -140,7 +147,7 @@ public final class ScanViewModel extends AndroidViewModel {
             return;
         }
 
-        if (!bluetoothAdapter.isEnabled()) {
+        if (!bluetoothManager.getAdapter().isEnabled()) {
             new AlertDialog.Builder(activity).setMessage(R.string.bluetooth_open_title)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -151,12 +158,12 @@ public final class ScanViewModel extends AndroidViewModel {
         }
         scaning.postValue(true);
         // 开始真正的扫描
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Set<BluetoothDevice> pairedDevices = bluetoothManager.getAdapter().getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
             bDevices.getValue().add(new MyBluetoothDevice(device, true));
         }
         bDevices.postValue(bDevices.getValue());
-        bluetoothAdapter.startDiscovery();
+        bluetoothManager.getAdapter().startDiscovery();
         handler.removeCallbacks(stopScanTask);
         handler.postDelayed(stopScanTask, TIME / 10 * 1000);
     }
@@ -164,7 +171,7 @@ public final class ScanViewModel extends AndroidViewModel {
     private void stopScanBluetooth() {
         handler.removeCallbacks(stopScanTask);
         if (isDiscovering()) {
-            bluetoothAdapter.cancelDiscovery();
+            bluetoothManager.getAdapter().cancelDiscovery();
         }
         scaning.postValue(false);
     }
